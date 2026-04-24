@@ -1,7 +1,8 @@
-﻿using System.Windows;
-using System.Windows.Documents;
+﻿using System.IO;
 using System.Media;
-using System.IO;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Documents;
 
 namespace CyberSecurityAwarenessBotGUI
 {
@@ -21,27 +22,21 @@ namespace CyberSecurityAwarenessBotGUI
             AppendText("Bot: Welcome to the Cybersecurity Awareness Bot!\n\n");
         }
         private void PlayGreeting()
-{
-    try
-    {
-        string path = @"C:\Users\Student\Documents\CyberSecurityChatbot\CyberSecurityAwarenessBotGUI\CyberSecurityAwarenessBotGUI\greeting.wav";
 
-        if (System.IO.File.Exists(path))
         {
-            SoundPlayer player = new SoundPlayer(path);
-            player.Load();      // 👈 IMPORTANT
-            player.PlaySync();  // 👈 Better for testing
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                try // the wav sound will play
+                {
+                    SoundPlayer player = new SoundPlayer(@"C:\Users\Student\Documents\CyberSecurityChatbot\CyberSecurityAwarenessBotGUI\CyberSecurityAwarenessBotGUI\greeting.wav");
+                    player.PlaySync();
+                }
+                catch
+                {
+                    Console.WriteLine("Voice greeting could not be played."); // but if there is an error this message will display
+                }
+            }
         }
-        else
-        {
-            MessageBox.Show("File not found!");
-        }
-    }
-    catch (Exception ex)
-    {
-        MessageBox.Show("Error: " + ex.Message);
-    }
-}
         private void ShowAsciiLogo()
         {
             string logo =
