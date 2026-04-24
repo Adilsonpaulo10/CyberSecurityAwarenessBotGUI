@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Documents;
+using System.Media;
+using System.IO;
 
 namespace CyberSecurityAwarenessBotGUI
 {
@@ -13,9 +15,27 @@ namespace CyberSecurityAwarenessBotGUI
 
             bot = new ChatbotEngine();
 
+            PlayGreeting();
+
             AppendText("Bot: Welcome to the Cybersecurity Awareness Bot!\n\n");
         }
+        private void PlayGreeting()
+        {
+            try
+            {
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "greeting.wav");
 
+                if (File.Exists(path))
+                {
+                    SoundPlayer player = new SoundPlayer(path);
+                    player.Play();
+                }
+            }
+            catch
+            {
+                AppendText("Bot: (Audio greeting could not be played)\n");
+            }
+        }
         private void sendBtn_Click(object sender, RoutedEventArgs e)
         {
             string input = inputBox.Text;
