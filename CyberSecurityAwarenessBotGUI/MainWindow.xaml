@@ -23,13 +23,12 @@
 
         <!-- Chat Display -->
         <RichTextBox x:Name="chatBox"
-                     Grid.Row="1"
-                     IsReadOnly="True"
-                     Background="Black"
-                     Foreground="Lime"
-                     FontFamily="Consolas"
-                     FontSize="12"
-                     Margin="0,0,0,10"/>
+             Grid.Row="1"
+             IsReadOnly="True"
+             Background="Black"
+             Foreground="Lime"
+             FontFamily="Consolas"
+             FontSize="12"/>
 
         <!-- Input Area -->
         <Grid Grid.Row="2">

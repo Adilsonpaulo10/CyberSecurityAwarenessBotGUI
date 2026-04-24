@@ -15,27 +15,48 @@ namespace CyberSecurityAwarenessBotGUI
 
             bot = new ChatbotEngine();
 
-            PlayGreeting();
+            ShowAsciiLogo();
+            PlayGreeting();    
 
             AppendText("Bot: Welcome to the Cybersecurity Awareness Bot!\n\n");
         }
         private void PlayGreeting()
-        {
-            try
-            {
-                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "greeting.wav");
+{
+    try
+    {
+        string path = @"C:\Users\Student\Documents\CyberSecurityChatbot\CyberSecurityAwarenessBotGUI\CyberSecurityAwarenessBotGUI\greeting.wav";
 
-                if (File.Exists(path))
-                {
-                    SoundPlayer player = new SoundPlayer(path);
-                    player.Play();
-                }
-            }
-            catch
-            {
-                AppendText("Bot: (Audio greeting could not be played)\n");
-            }
+        if (System.IO.File.Exists(path))
+        {
+            SoundPlayer player = new SoundPlayer(path);
+            player.Load();      // 👈 IMPORTANT
+            player.PlaySync();  // 👈 Better for testing
         }
+        else
+        {
+            MessageBox.Show("File not found!");
+        }
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show("Error: " + ex.Message);
+    }
+}
+        private void ShowAsciiLogo()
+        {
+            string logo =
+        @"   _____      _                _____            
+  / ____|    | |              |  __ \           
+ | |     __ _| |__   ___ _ __ | |__) |___  ___  
+ | |    / _` | '_ \ / _ \ '_ \|  _  // _ \/ __| 
+ | |___| (_| | |_) |  __/ | | | | \ \  __/\__ \ 
+  \_____\__,_|_.__/ \___|_| |_|_|  \_\___||___/ 
+        CYBERSECURITY AWARENESS BOT 🔒
+------------------------------------------------";
+
+            AppendText(logo + "\n\n");
+        }
+
         private void sendBtn_Click(object sender, RoutedEventArgs e)
         {
             string input = inputBox.Text;
