@@ -18,7 +18,17 @@ namespace CyberSecurityAwarenessBotGUI
 
         public string GetResponse(string input)
         {
+            if (string.IsNullOrWhiteSpace(input))
+                return "Please enter a message.";
+
             input = input.ToLower();
+
+            // Sentiment
+            if (input.Contains("worried"))
+                return "It's okay to feel worried. I'm here to help.";
+
+            if (input.Contains("curious"))
+                return "Curiosity is great for learning cybersecurity!";
 
             foreach (var key in responses.Keys)
             {
@@ -26,7 +36,7 @@ namespace CyberSecurityAwarenessBotGUI
                     return responses[key];
             }
 
-            return "I don't understand. Try another question.";
+            return "I'm not sure I understand.";
         }
     }
 }
