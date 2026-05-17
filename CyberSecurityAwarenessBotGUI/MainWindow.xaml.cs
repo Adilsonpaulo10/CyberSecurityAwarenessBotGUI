@@ -119,22 +119,57 @@ namespace CyberSecurityAwarenessBotGUI
         private int score = 0;
 
         private string[] questions =
-        {
-            "What does VPN stand for?",
-            "Is phishing a scam technique?",
-            "What should strong passwords contain?"
-        };
+{
+    "What does VPN stand for?",
+    "Is phishing a scam technique?",
+    "What should strong passwords contain?",
+    "What is malware?",
+    "Should you share passwords with others?",
+    "What is 2FA?",
+    "Is public Wi-Fi always safe?",
+    "What does phishing try to steal?",
+    "What should you do with suspicious emails?",
+    "What protects a computer from viruses?"
+};
 
         private string[,] options =
         {
-            { "Virtual Private Network", "Very Personal Network", "Verified Public Network", "Visible Private Node" },
+    { "Virtual Private Network", "Very Personal Network", "Verified Public Network", "Visible Private Node" },
 
-            { "Yes", "No", "Only sometimes", "Unknown" },
+    { "Yes", "No", "Only sometimes", "Unknown" },
 
-            { "Only letters", "Only numbers", "Letters, numbers, and symbols", "Your name" }
-        };
+    { "Only letters", "Only numbers", "Letters, numbers, and symbols", "Your name" },
 
-        private int[] answers = { 0, 0, 2 };
+    { "Helpful software", "A cyber threat", "A password manager", "An internet browser" },
+
+    { "Yes", "No", "Only with friends", "Only online" },
+
+    { "Two-Factor Authentication", "Two File Access", "Fast Login", "Private Browser" },
+
+    { "Yes", "No", "Only at school", "Only during daytime" },
+
+    { "Games", "Personal information", "Music", "Videos" },
+
+    { "Open them immediately", "Ignore security", "Delete/report them", "Forward to strangers" },
+
+    { "Antivirus software", "Paint", "Calculator", "Notepad" }
+};
+
+        private int[] answers =
+        {
+    0,
+    0,
+    2,
+    1,
+    1,
+    0,
+    1,
+    1,
+    2,
+    0
+};
+
+
 
         private void SetupQuiz()
         {
@@ -189,6 +224,17 @@ namespace CyberSecurityAwarenessBotGUI
             }
 
             DisplayQuestion();
+
+        }
+        private void DeleteTask_Click(object sender, RoutedEventArgs e)
+        {
+            if (taskListBox.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a task.");
+                return;
+            }
+
+            MessageBox.Show("Delete feature coming next.");
         }
     }
 }
