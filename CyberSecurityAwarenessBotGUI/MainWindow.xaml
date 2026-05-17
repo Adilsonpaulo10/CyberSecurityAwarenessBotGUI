@@ -4,50 +4,151 @@
         Title="Cybersecurity Awareness Bot" Height="500" Width="800"
         WindowStartupLocation="CenterScreen">
 
-    <Grid Margin="10">
+    <Grid Background="#1E1E1E">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <TabControl Margin="10">
 
-        <!-- Title -->
-        <TextBlock x:Name="titleLabel"
-                   Text="Cybersecurity Awareness Bot 🔒"
-                   FontSize="20"
-                   FontWeight="Bold"
-                   Foreground="DarkBlue"
-                   HorizontalAlignment="Center"
-                   Margin="0,0,0,10"/>
+            <!-- CHATBOT TAB -->
+            <TabItem Header="Chatbot">
 
-        <!-- Chat Display -->
-        <RichTextBox x:Name="chatBox"
-             Grid.Row="1"
-             IsReadOnly="True"
-             Background="Black"
-             Foreground="Lime"
-             FontFamily="Consolas"
-             FontSize="12"/>
+                <Grid Margin="10">
 
-        <!-- Input Area -->
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="120"/>
-            </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-            <TextBox x:Name="inputBox"
-                     FontSize="12"
-                     Margin="0,0,10,0"/>
+                    <RichTextBox x:Name="chatBox"
+                             Grid.Row="0"
+                             IsReadOnly="True"
+                             FontFamily="Consolas"
+                             FontSize="14"
+                             Background="Black"
+                             Foreground="Lime"
+                             Margin="0,0,0,10"/>
 
-            <Button x:Name="sendBtn"
-                    Grid.Column="1"
-                    Content="Send"
-                    FontWeight="Bold"
-                    Background="LightBlue"
-                    Click="sendBtn_Click"/>
-        </Grid>
+                    <StackPanel Grid.Row="1"
+                            Orientation="Horizontal">
+
+                        <TextBox x:Name="inputBox"
+                             Width="600"
+                             Height="35"
+                             FontSize="14"
+                             Margin="0,0,10,0"/>
+
+                        <Button x:Name="sendBtn"
+                            Content="Send"
+                            Width="120"
+                            Height="35"
+                            Click="sendBtn_Click"/>
+                    </StackPanel>
+
+                </Grid>
+            </TabItem>
+
+            <!-- TASKS TAB -->
+            <TabItem Header="Tasks">
+
+                <Grid Margin="10">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox x:Name="taskTitleBox"
+                         Height="30"
+                         Margin="0,0,0,10"
+                         Text="Task Title"/>
+
+                    <StackPanel Grid.Row="1"
+                            Orientation="Horizontal"
+                            Margin="0,0,0,10">
+
+                        <TextBox x:Name="taskDescriptionBox"
+                             Width="300"
+                             Height="30"
+                             Margin="0,0,10,0"
+                             Text="Description"/>
+
+                        <TextBox x:Name="reminderBox"
+                             Width="150"
+                             Height="30"
+                             Margin="0,0,10,0"
+                             Text="Reminder"/>
+
+                        <Button Content="Add Task"
+                            Width="120"
+                            Click="AddTask_Click"/>
+                    </StackPanel>
+
+                    <ListBox x:Name="taskListBox"
+                         Grid.Row="2"/>
+                </Grid>
+            </TabItem>
+
+            <!-- QUIZ TAB -->
+            <TabItem Header="Quiz">
+
+                <Grid Margin="20">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock x:Name="questionText"
+                           FontSize="22"
+                           FontWeight="Bold"
+                           Margin="0,0,0,20"
+                           TextWrapping="Wrap"/>
+
+                    <StackPanel Grid.Row="1">
+
+                        <Button x:Name="optionA"
+                            Margin="0,5"
+                            Height="40"
+                            Click="Option_Click"/>
+
+                        <Button x:Name="optionB"
+                            Margin="0,5"
+                            Height="40"
+                            Click="Option_Click"/>
+
+                        <Button x:Name="optionC"
+                            Margin="0,5"
+                            Height="40"
+                            Click="Option_Click"/>
+
+                        <Button x:Name="optionD"
+                            Margin="0,5"
+                            Height="40"
+                            Click="Option_Click"/>
+                    </StackPanel>
+
+                    <TextBlock x:Name="scoreText"
+                           Grid.Row="2"
+                           Margin="0,20,0,0"
+                           FontSize="18"
+                           FontWeight="Bold"/>
+                </Grid>
+            </TabItem>
+
+            <!-- LOG TAB -->
+            <TabItem Header="Activity Logs">
+
+                <Grid Margin="10">
+
+                    <ListBox x:Name="logListBox"/>
+
+                </Grid>
+            </TabItem>
+
+        </TabControl>
 
     </Grid>
+
 </Window>
