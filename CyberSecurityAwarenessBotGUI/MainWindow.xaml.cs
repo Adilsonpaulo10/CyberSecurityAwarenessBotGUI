@@ -9,13 +9,67 @@ namespace CyberSecurityAwarenessBotGUI
         private ChatbotEngine bot;
         private DatabaseHelper db;
 
+        private int currentQuestion = 0;
+        private int score = 0;
+
+        private string[] questions =
+        {
+            "What does VPN stand for?",
+            "Is phishing a scam technique?",
+            "What should strong passwords contain?",
+            "What is malware?",
+            "Should you share passwords with others?",
+            "What is 2FA?",
+            "Is public Wi-Fi always safe?",
+            "What does phishing try to steal?",
+            "What should you do with suspicious emails?",
+            "What protects a computer from viruses?"
+        };
+
+        private string[,] options =
+        {
+            { "Virtual Private Network", "Very Personal Network", "Verified Public Network", "Visible Private Node" },
+
+            { "Yes", "No", "Only sometimes", "Unknown" },
+
+            { "Only letters", "Only numbers", "Letters, numbers, and symbols", "Your name" },
+
+            { "Helpful software", "A cyber threat", "A password manager", "An internet browser" },
+
+            { "Yes", "No", "Only with friends", "Only online" },
+
+            { "Two-Factor Authentication", "Two File Access", "Fast Login", "Private Browser" },
+
+            { "Yes", "No", "Only at school", "Only during daytime" },
+
+            { "Games", "Personal information", "Music", "Videos" },
+
+            { "Open them immediately", "Ignore security", "Delete/report them", "Forward to strangers" },
+
+            { "Antivirus software", "Paint", "Calculator", "Notepad" }
+        };
+
+        private int[] answers =
+        {
+            0,
+            0,
+            2,
+            1,
+            1,
+            0,
+            1,
+            1,
+            2,
+            0
+        };
+
         public MainWindow()
         {
             InitializeComponent();
 
             bot = new ChatbotEngine();
             db = new DatabaseHelper();
-
+          
             AppendText("Bot: Welcome to the Cybersecurity Awareness Bot!\n\n");
 
             LoadTasks();
@@ -27,6 +81,7 @@ namespace CyberSecurityAwarenessBotGUI
         // =========================
         // CHATBOT
         // =========================
+
         private void sendBtn_Click(object sender, RoutedEventArgs e)
         {
             string input = inputBox.Text;
@@ -62,6 +117,7 @@ namespace CyberSecurityAwarenessBotGUI
         // =========================
         // TASKS
         // =========================
+
         private void AddTask_Click(object sender, RoutedEventArgs e)
         {
             string title = taskTitleBox.Text;
@@ -98,9 +154,54 @@ namespace CyberSecurityAwarenessBotGUI
             }
         }
 
+        private void DeleteTask_Click(object sender, RoutedEventArgs e)
+        {
+            if (taskListBox.SelectedItem == null)
+            {
+                MessageBox.Show("Select a task first.");
+                return;
+            }
+
+            string selected = taskListBox.SelectedItem.ToString();
+
+            int id = int.Parse(selected.Split(':')[0]);
+
+            db.DeleteTask(id);
+
+            db.LogActivity("Deleted task ID: " + id);
+
+            LoadTasks();
+            LoadLogs();
+
+            MessageBox.Show("Task deleted.");
+        }
+
+        private void CompleteTask_Click(object sender, RoutedEventArgs e)
+        {
+            if (taskListBox.SelectedItem == null)
+            {
+                MessageBox.Show("Select a task first.");
+                return;
+            }
+
+            string selected = taskListBox.SelectedItem.ToString();
+
+            int id = int.Parse(selected.Split(':')[0]);
+
+            db.CompleteTask(id);
+
+            db.LogActivity("Completed task ID: " + id);
+
+            LoadTasks();
+            LoadLogs();
+
+            MessageBox.Show("Task marked complete.");
+        }
+
         // =========================
         // ACTIVITY LOGS
         // =========================
+
         private void LoadLogs()
         {
             logListBox.Items.Clear();
@@ -112,64 +213,8 @@ namespace CyberSecurityAwarenessBotGUI
         }
 
         // =========================
-        // QUIZ SYSTEM
+        // QUIZ
         // =========================
-
-        private int currentQuestion = 0;
-        private int score = 0;
-
-        private string[] questions =
-{
-    "What does VPN stand for?",
-    "Is phishing a scam technique?",
-    "What should strong passwords contain?",
-    "What is malware?",
-    "Should you share passwords with others?",
-    "What is 2FA?",
-    "Is public Wi-Fi always safe?",
-    "What does phishing try to steal?",
-    "What should you do with suspicious emails?",
-    "What protects a computer from viruses?"
-};
-
-        private string[,] options =
-        {
-    { "Virtual Private Network", "Very Personal Network", "Verified Public Network", "Visible Private Node" },
-
-    { "Yes", "No", "Only sometimes", "Unknown" },
-
-    { "Only letters", "Only numbers", "Letters, numbers, and symbols", "Your name" },
-
-    { "Helpful software", "A cyber threat", "A password manager", "An internet browser" },
-
-    { "Yes", "No", "Only with friends", "Only online" },
-
-    { "Two-Factor Authentication", "Two File Access", "Fast Login", "Private Browser" },
-
-    { "Yes", "No", "Only at school", "Only during daytime" },
-
-    { "Games", "Personal information", "Music", "Videos" },
-
-    { "Open them immediately", "Ignore security", "Delete/report them", "Forward to strangers" },
-
-    { "Antivirus software", "Paint", "Calculator", "Notepad" }
-};
-
-        private int[] answers =
-        {
-    0,
-    0,
-    2,
-    1,
-    1,
-    0,
-    1,
-    1,
-    2,
-    0
-};
-
-
 
         private void SetupQuiz()
         {
@@ -217,24 +262,13 @@ namespace CyberSecurityAwarenessBotGUI
 
             if (currentQuestion >= questions.Length)
             {
-                MessageBox.Show($"Quiz complete! Final score: {score}");
+                MessageBox.Show($"Quiz complete!\n\nFinal Score: {score}/{questions.Length}");
 
                 currentQuestion = 0;
                 score = 0;
             }
 
             DisplayQuestion();
-
-        }
-        private void DeleteTask_Click(object sender, RoutedEventArgs e)
-        {
-            if (taskListBox.SelectedItem == null)
-            {
-                MessageBox.Show("Please select a task.");
-                return;
-            }
-
-            MessageBox.Show("Delete feature coming next.");
         }
     }
 }
