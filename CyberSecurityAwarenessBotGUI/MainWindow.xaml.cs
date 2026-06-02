@@ -1,4 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.IO;
+using System.Media;
+using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
@@ -29,38 +33,21 @@ namespace CyberSecurityAwarenessBotGUI
         private string[,] options =
         {
             { "Virtual Private Network", "Very Personal Network", "Verified Public Network", "Visible Private Node" },
-
             { "Yes", "No", "Only sometimes", "Unknown" },
-
             { "Only letters", "Only numbers", "Letters, numbers, and symbols", "Your name" },
-
             { "Helpful software", "A cyber threat", "A password manager", "An internet browser" },
-
             { "Yes", "No", "Only with friends", "Only online" },
-
             { "Two-Factor Authentication", "Two File Access", "Fast Login", "Private Browser" },
-
             { "Yes", "No", "Only at school", "Only during daytime" },
-
             { "Games", "Personal information", "Music", "Videos" },
-
             { "Open them immediately", "Ignore security", "Delete/report them", "Forward to strangers" },
-
             { "Antivirus software", "Paint", "Calculator", "Notepad" }
         };
 
         private int[] answers =
         {
-            0,
-            0,
-            2,
-            1,
-            1,
-            0,
-            1,
-            1,
-            2,
-            0
+            0, 0, 2, 1, 1,
+            0, 1, 1, 2, 0
         };
 
         public MainWindow()
@@ -69,8 +56,12 @@ namespace CyberSecurityAwarenessBotGUI
 
             bot = new ChatbotEngine();
             db = new DatabaseHelper();
-          
-            AppendText("Bot: Welcome to the Cybersecurity Awareness Bot!\n\n");
+
+            ShowAsciiLogo();
+            PlayGreeting();
+
+            AppendText("Bot: Welcome to the Cybersecurity Awareness Bot!\n");
+            AppendText("Bot: Type a question or use 'add task TaskName' to create a task.\n\n");
 
             LoadTasks();
             LoadLogs();
@@ -78,13 +69,53 @@ namespace CyberSecurityAwarenessBotGUI
             SetupQuiz();
         }
 
-        // =========================
+        // ====================================
+        // STARTUP FEATURES
+        // ====================================
+        private void PlayGreeting()
+
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                try // the wav sound will play
+                {
+                    string wavPath = @"C:\Users\Student\Documents\CyberSecurityChatbot\CyberSecurityAwarenessBotGUI\CyberSecurityAwarenessBotGUI\greeting.wav";
+
+                    MessageBox.Show(File.Exists(wavPath).ToString());
+                    SoundPlayer player = new SoundPlayer(@"C:\Users\Student\Documents\CyberSecurityChatbot\CyberSecurityAwarenessBotGUI\CyberSecurityAwarenessBotGUI\greeting.wav");
+                    player.PlaySync();
+                }
+                catch
+                {
+                    Console.WriteLine("Voice greeting could not be played."); // but if there is an error this message will display
+                }
+            }
+        }
+        private void ShowAsciiLogo()
+        {
+            string logo =
+@"  _____       _                _____
+ / ____|     | |              |  __ \
+| |     _   _| |__   ___ _ __ | |__) |
+| |    | | | | '_ \ / _ \ '__||  _  /
+| |____| |_| | |_) |  __/ |   | | \ \
+ \_____|\__, |_.__/ \___|_|   |_|  \_\
+         __/ |
+        |___/
+
+Cybersecurity Awareness Bot";
+
+            AppendText(logo + "\n\n");
+        }
+       
+
+        // ====================================
         // CHATBOT
-        // =========================
+        // ====================================
 
         private void sendBtn_Click(object sender, RoutedEventArgs e)
         {
-            string input = inputBox.Text;
+            string input = inputBox.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(input))
             {
@@ -93,6 +124,8 @@ namespace CyberSecurityAwarenessBotGUI
             }
 
             AppendText("You: " + input + "\n");
+
+            // Chatbot task creation
             if (input.ToLower().StartsWith("add task "))
             {
                 string title = input.Substring(9);
@@ -101,10 +134,10 @@ namespace CyberSecurityAwarenessBotGUI
 
                 db.LogActivity("Task added via chatbot: " + title);
 
+                AppendText("Bot: Task added successfully!\n\n");
+
                 LoadTasks();
                 LoadLogs();
-
-                AppendText("Bot: Task added successfully!\n\n");
 
                 inputBox.Clear();
                 return;
@@ -124,15 +157,14 @@ namespace CyberSecurityAwarenessBotGUI
         private void AppendText(string text)
         {
             chatBox.Document.Blocks.Add(
-                new Paragraph(new Run(text))
-            );
+                new Paragraph(new Run(text)));
 
             chatBox.ScrollToEnd();
         }
 
-        // =========================
+        // ====================================
         // TASKS
-        // =========================
+        // ====================================
 
         private void AddTask_Click(object sender, RoutedEventArgs e)
         {
@@ -160,16 +192,6 @@ namespace CyberSecurityAwarenessBotGUI
             MessageBox.Show("Task added successfully.");
         }
 
-        private void LoadTasks()
-        {
-            taskListBox.Items.Clear();
-
-            foreach (var task in db.GetTasks())
-            {
-                taskListBox.Items.Add(task);
-            }
-        }
-
         private void DeleteTask_Click(object sender, RoutedEventArgs e)
         {
             if (taskListBox.SelectedItem == null)
@@ -178,7 +200,7 @@ namespace CyberSecurityAwarenessBotGUI
                 return;
             }
 
-            string selected = taskListBox.SelectedItem.ToString();
+            string selected = taskListBox.SelectedItem.ToString() ?? "";
 
             int id = int.Parse(selected.Split(':')[0]);
 
@@ -200,7 +222,7 @@ namespace CyberSecurityAwarenessBotGUI
                 return;
             }
 
-            string selected = taskListBox.SelectedItem.ToString();
+            string selected = taskListBox.SelectedItem.ToString() ?? "";
 
             int id = int.Parse(selected.Split(':')[0]);
 
@@ -214,23 +236,33 @@ namespace CyberSecurityAwarenessBotGUI
             MessageBox.Show("Task marked complete.");
         }
 
-        // =========================
+        private void LoadTasks()
+        {
+            taskListBox.Items.Clear();
+
+            foreach (string task in db.GetTasks())
+            {
+                taskListBox.Items.Add(task);
+            }
+        }
+
+        // ====================================
         // ACTIVITY LOGS
-        // =========================
+        // ====================================
 
         private void LoadLogs()
         {
             logListBox.Items.Clear();
 
-            foreach (var log in db.GetLogs())
+            foreach (string log in db.GetLogs())
             {
                 logListBox.Items.Add(log);
             }
         }
 
-        // =========================
+        // ====================================
         // QUIZ
-        // =========================
+        // ====================================
 
         private void SetupQuiz()
         {
@@ -256,9 +288,9 @@ namespace CyberSecurityAwarenessBotGUI
             int selectedAnswer = 0;
 
             if (clickedButton == optionA) selectedAnswer = 0;
-            if (clickedButton == optionB) selectedAnswer = 1;
-            if (clickedButton == optionC) selectedAnswer = 2;
-            if (clickedButton == optionD) selectedAnswer = 3;
+            else if (clickedButton == optionB) selectedAnswer = 1;
+            else if (clickedButton == optionC) selectedAnswer = 2;
+            else if (clickedButton == optionD) selectedAnswer = 3;
 
             if (selectedAnswer == answers[currentQuestion])
             {
@@ -278,7 +310,8 @@ namespace CyberSecurityAwarenessBotGUI
 
             if (currentQuestion >= questions.Length)
             {
-                MessageBox.Show($"Quiz complete!\n\nFinal Score: {score}/{questions.Length}");
+                MessageBox.Show(
+                    $"Quiz Complete!\n\nFinal Score: {score}/{questions.Length}");
 
                 currentQuestion = 0;
                 score = 0;
