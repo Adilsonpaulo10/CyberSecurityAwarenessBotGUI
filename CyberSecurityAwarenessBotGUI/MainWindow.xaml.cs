@@ -93,6 +93,22 @@ namespace CyberSecurityAwarenessBotGUI
             }
 
             AppendText("You: " + input + "\n");
+            if (input.ToLower().StartsWith("add task "))
+            {
+                string title = input.Substring(9);
+
+                db.AddTask(title, "Created via chatbot", "Not Set");
+
+                db.LogActivity("Task added via chatbot: " + title);
+
+                LoadTasks();
+                LoadLogs();
+
+                AppendText("Bot: Task added successfully!\n\n");
+
+                inputBox.Clear();
+                return;
+            }
 
             string response = bot.GetResponse(input);
 
