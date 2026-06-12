@@ -92,3 +92,36 @@ Developed using C# and WPF in Visual Studio
 
 cl screenshot
 <img width="1900" height="787" alt="All 6 commits" src="https://github.com/user-attachments/assets/cea6d976-7a48-4f57-8b6d-d4aae1382a3f" />
+
+Part 3 Features
+SQL Server database integration
+Task management system
+Add tasks
+Complete tasks
+Delete tasks
+Activity logging
+Reminder support
+Enhanced chatbot responses
+Topic tracking and follow-up conversations
+Sentiment-aware responses
+Cybersecurity quiz with 11+ questions
+Quiz performance feedback
+WAV startup greeting
+ASCII logo displayed in the application
+Technologies Used
+C#
+WPF (.NET)
+SQL Server
+Microsoft.Data.SqlClient
+How to Run
+Open the solution in Visual Studio.
+Ensure SQL Server is installed and running.
+Create the CyberSecurityBotDB database.
+Update the connection string if necessary.
+Build and run the application.
+Author
+
+Cybersecurity Awareness Bot Project
+cl screenshot <img width="1347" height="619" alt="part 3 commits" src="https://github.com/user-attachments/assets/ff335033-33f5-434b-a1fd-aa2a87846f1c" />
+
+
