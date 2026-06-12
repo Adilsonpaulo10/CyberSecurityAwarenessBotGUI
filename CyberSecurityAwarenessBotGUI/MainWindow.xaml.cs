@@ -17,38 +17,59 @@ namespace CyberSecurityAwarenessBotGUI
         private int score = 0;
 
         private string[] questions =
-        {
-            "What does VPN stand for?",
-            "Is phishing a scam technique?",
-            "What should strong passwords contain?",
-            "What is malware?",
-            "Should you share passwords with others?",
-            "What is 2FA?",
-            "Is public Wi-Fi always safe?",
-            "What does phishing try to steal?",
-            "What should you do with suspicious emails?",
-            "What protects a computer from viruses?"
-        };
+ {
+    "What does VPN stand for?",
+    "Is phishing a scam technique?",
+    "What should strong passwords contain?",
+    "What is malware?",
+    "Should you share passwords with others?",
+    "What is 2FA?",
+    "Is public Wi-Fi always safe?",
+    "What does phishing try to steal?",
+    "What should you do with suspicious emails?",
+    "What protects a computer from viruses?",
+    "What should you do before clicking a link in an email?"
+};
 
         private string[,] options =
         {
-            { "Virtual Private Network", "Very Personal Network", "Verified Public Network", "Visible Private Node" },
-            { "Yes", "No", "Only sometimes", "Unknown" },
-            { "Only letters", "Only numbers", "Letters, numbers, and symbols", "Your name" },
-            { "Helpful software", "A cyber threat", "A password manager", "An internet browser" },
-            { "Yes", "No", "Only with friends", "Only online" },
-            { "Two-Factor Authentication", "Two File Access", "Fast Login", "Private Browser" },
-            { "Yes", "No", "Only at school", "Only during daytime" },
-            { "Games", "Personal information", "Music", "Videos" },
-            { "Open them immediately", "Ignore security", "Delete/report them", "Forward to strangers" },
-            { "Antivirus software", "Paint", "Calculator", "Notepad" }
-        };
+    { "Virtual Private Network", "Very Personal Network", "Verified Public Network", "Visible Private Node" },
+
+    { "Yes", "No", "Only sometimes", "Unknown" },
+
+    { "Only letters", "Only numbers", "Letters, numbers, and symbols", "Your name" },
+
+    { "Helpful software", "A cyber threat", "A password manager", "An internet browser" },
+
+    { "Yes", "No", "Only with friends", "Only online" },
+
+    { "Two-Factor Authentication", "Two File Access", "Fast Login", "Private Browser" },
+
+    { "Yes", "No", "Only at school", "Only during daytime" },
+
+    { "Games", "Personal information", "Music", "Videos" },
+
+    { "Open them immediately", "Ignore security", "Delete/report them", "Forward to strangers" },
+
+    { "Antivirus software", "Paint", "Calculator", "Notepad" },
+
+    { "Click immediately", "Verify the sender and URL", "Forward it to friends", "Ignore all emails" }
+};
 
         private int[] answers =
         {
-            0, 0, 2, 1, 1,
-            0, 1, 1, 2, 0
-        };
+    0, // VPN
+    0, // Phishing
+    2, // Strong password
+    1, // Malware
+    1, // Share passwords
+    0, // 2FA
+    1, // Public Wi-Fi
+    1, // Phishing steals
+    2, // Suspicious emails
+    0, // Antivirus
+    1  // Verify sender and URL
+};
 
         public MainWindow()
         {
@@ -79,9 +100,7 @@ namespace CyberSecurityAwarenessBotGUI
             {
                 try // the wav sound will play
                 {
-                    string wavPath = @"C:\Users\Student\Documents\CyberSecurityChatbot\CyberSecurityAwarenessBotGUI\CyberSecurityAwarenessBotGUI\greeting.wav";
-
-                    MessageBox.Show(File.Exists(wavPath).ToString());
+                    
                     SoundPlayer player = new SoundPlayer(@"C:\Users\Student\Documents\CyberSecurityChatbot\CyberSecurityAwarenessBotGUI\CyberSecurityAwarenessBotGUI\greeting.wav");
                     player.PlaySync();
                 }
@@ -91,23 +110,22 @@ namespace CyberSecurityAwarenessBotGUI
                 }
             }
         }
+
         private void ShowAsciiLogo()
         {
-            string logo =
-@"  _____       _                _____
- / ____|     | |              |  __ \
-| |     _   _| |__   ___ _ __ | |__) |
-| |    | | | | '_ \ / _ \ '__||  _  /
-| |____| |_| | |_) |  __/ |   | | \ \
- \_____|\__, |_.__/ \___|_|   |_|  \_\
+            asciiLogo.Text =
+        @"  _____       _               
+ / ____|     | |              
+| |     _   _| |__   ___ _ __ 
+| |    | | | | '_ \ / _ \ '__|
+| |____| |_| | |_) |  __/ |   
+ \_____|\__, |_.__/ \___|_|   
          __/ |
         |___/
 
 Cybersecurity Awareness Bot";
-
-            AppendText(logo + "\n\n");
         }
-       
+
 
         // ====================================
         // CHATBOT
@@ -126,23 +144,19 @@ Cybersecurity Awareness Bot";
             AppendText("You: " + input + "\n");
 
             // Chatbot task creation
-            if (input.ToLower().StartsWith("add task "))
+            if (input.ToLower().StartsWith("add task"))
             {
-                string title = input.Substring(9);
+                string title = input.Replace("add task", "").Trim();
 
-                db.AddTask(title, "Created via chatbot", "Not Set");
+                db.AddTask(title,
+                           "Created via chatbot",
+                           "Pending Reminder");
 
                 db.LogActivity("Task added via chatbot: " + title);
 
-                AppendText("Bot: Task added successfully!\n\n");
-
                 LoadTasks();
                 LoadLogs();
-
-                inputBox.Clear();
-                return;
             }
-
             string response = bot.GetResponse(input);
 
             AppendText("Bot: " + response + "\n\n");
@@ -307,11 +321,37 @@ Cybersecurity Awareness Bot";
             LoadLogs();
 
             currentQuestion++;
-
             if (currentQuestion >= questions.Length)
             {
+                string feedback = "";
+
+                double percentage =
+                    ((double)score / questions.Length) * 100;
+
+                if (percentage >= 90)
+                {
+                    feedback = "Excellent! You are a cybersecurity pro!";
+                }
+                else if (percentage >= 75)
+                {
+                    feedback = "Great job! You have strong cybersecurity awareness.";
+                }
+                else if (percentage >= 50)
+                {
+                    feedback = "Good effort! Consider reviewing some cybersecurity topics.";
+                }
+                else
+                {
+                    feedback = "You need more cybersecurity practice. Keep learning and try again!";
+                }
+
                 MessageBox.Show(
-                    $"Quiz Complete!\n\nFinal Score: {score}/{questions.Length}");
+                    $"Quiz Complete!\n\n" +
+                    $"Final Score: {score}/{questions.Length}\n\n" +
+                    feedback);
+
+                db.LogActivity(
+                    $"Quiz completed. Score: {score}/{questions.Length}");
 
                 currentQuestion = 0;
                 score = 0;
